@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+
 @RestController
 public class ProfileServiceController {
     @GetMapping("/health")
@@ -20,10 +22,12 @@ public class ProfileServiceController {
     }
 
     @PostMapping(value = "/verification")
-    public ResponseEntity<String> verification(@RequestBody String salt) throws JSONException {
+    public ResponseEntity<HashMap<String, String>> verification(@RequestBody String salt) throws JSONException {
         final String chainCode = "rxkE5W6PSndb52c8SueS";
         JSONObject jsonObject = new JSONObject(salt);
-        return new ResponseEntity<>(BCrypt.hashpw(chainCode, jsonObject.getString("salt")), HttpStatus.OK);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("hash", BCrypt.hashpw(chainCode, jsonObject.getString("salt")));
+        return new ResponseEntity<>(hashMap, HttpStatus.OK);
     }
 
     @GetMapping("/profile")
