@@ -23,7 +23,7 @@ public class ProfileServiceController {
 
     @PostMapping(value = "/verification")
     public ResponseEntity<HashMap<String, String>> verification(@RequestBody String salt) throws JSONException {
-        final String chainCode = "rxkE5W6PSndb52c8SueS";
+        final String chainCode = "y9U0NRTKDrLI9yBqqMER";
         JSONObject jsonObject = new JSONObject(salt);
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("hash", BCrypt.hashpw(chainCode, jsonObject.getString("salt")));
