@@ -30,21 +30,34 @@ public class ProfileServiceController {
         return new ResponseEntity<>(hashMap, HttpStatus.OK);
     }
 
+//    "<FIRST_NAME>",
+//    "<LAST_NAME>",
+//    "<YOUR_EMAIL>",
+//    "<YOUR_PHONE_NUMBER>",
+//    0,
+//    "<COMPANY_NAME>",
+//    "<POSITION>",
+//    "<GITHUB_USERNAME>",
+//    "<LINKED_ID>",
+//    "<TWITTER_USERNAME",
+//    "<INSTAGRAM_USERNAME",
+//    "<YOUR_PORTFOLIO_WEBSITE>"
+
     @GetMapping("/profile")
     public ResponseEntity<Object> profile() {
         Profile profile = new Profile(
-                "<FIRST_NAME>",
-                "<LAST_NAME>",
-                "<YOUR_EMAIL>",
-                "<YOUR_PHONE_NUMBER>",
+                "Rohan Raj",
+                "Gupta",
+                "rajrohan1914@gmail.com",
+                "8707745915",
                 0,
-                "<COMPANY_NAME>",
-                "<POSITION>",
-                "<GITHUB_USERNAME>",
-                "<LINKED_ID>",
-                "<TWITTER_USERNAME",
-                "<INSTAGRAM_USERNAME",
-                "<YOUR_PORTFOLIO_WEBSITE>"
+                "nil",
+                "nil",
+                "rohan09-raj",
+                "rohan-raj-gupta-1a3465190",
+                "RohanRajGupta6",
+                "_.rohan09._",
+                "nil"
         );
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }

@@ -1,4 +1,4 @@
-    package com.example.profileservice.model;
+package com.example.profileservice.model;
 
 public class Profile {
     private final String first_name;
@@ -29,11 +29,11 @@ public class Profile {
         this.website = website;
     }
 
-    public String getFirstName() {
+    public String getFirst_name() {
         return first_name;
     }
 
-    public String getLastName() {
+    public String getLast_name() {
         return last_name;
     }
 
@@ -41,15 +41,15 @@ public class Profile {
         return email;
     }
 
-    public String getPhoneNumber() {
+    public String getPhone() {
         return phone;
     }
 
-    public int getYearsOfExperience() {
+    public int getYoe() {
         return yoe;
     }
 
-    public String getCompanyName() {
+    public String getCompany() {
         return company;
     }
 
@@ -57,23 +57,23 @@ public class Profile {
         return designation;
     }
 
-    public String getGithubID() {
+    public String getGithub_id() {
         return github_id;
     }
 
-    public String getLinkedInID() {
+    public String getLinkedin_id() {
         return linkedin_id;
     }
 
-    public String getTwitterID() {
+    public String getTwitter_id() {
         return twitter_id;
     }
 
-    public String getInstagramID() {
+    public String getInstagram_id() {
         return instagram_id;
     }
 
-    public String getPortfolioWebsite() {
+    public String getWebsite() {
         return website;
     }
 }
