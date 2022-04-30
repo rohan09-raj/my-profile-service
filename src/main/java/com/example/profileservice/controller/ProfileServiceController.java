@@ -33,18 +33,18 @@ public class ProfileServiceController {
     @GetMapping("/profile")
     public ResponseEntity<Object> profile() {
         Profile profile = new Profile(
-                "Rohan Raj",
-                "Gupta",
-                "rajrohan1914@gmail.com",
-                "8707745915",
+                "<FIRST_NAME>",
+                "<LAST_NAME>",
+                "<YOUR_EMAIL>",
+                "<YOUR_PHONE_NUMBER>",
                 0,
-                "AndWeMet",
-                "SDE Intern",
-                "rohan09-raj",
-                "rohanrajgupta12",
-                "RohanRajGupta6",
-                "_.rohan09._",
-                "https://lift-simulation-by-rohan.netlify.app/src/index.html"
+                "<COMPANY_NAME>",
+                "<POSITION>",
+                "<GITHUB_USERNAME>",
+                "<LINKED_ID>",
+                "<TWITTER_USERNAME",
+                "<INSTAGRAM_USERNAME",
+                "<YOUR_PORTFOLIO_WEBSITE>"
         );
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
