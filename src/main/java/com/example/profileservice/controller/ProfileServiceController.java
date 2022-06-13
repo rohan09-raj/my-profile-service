@@ -1,64 +1,93 @@
 package com.example.profileservice.controller;
 
 import com.example.profileservice.model.Profile;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 @RestController
 public class ProfileServiceController {
+    @Autowired
+    private Environment env;
+
     @GetMapping("/health")
     public ResponseEntity<String> health() {
-        final String status = "status: UP";
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        try {
+            final String status = "status: UP";
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (Exception e) {
+            final String status = "status: DOWN";
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Object> profile(@RequestHeader("authorization") String token) {
+        try {
+            if (token.isEmpty()) {
+                HashMap<String, String> errorMap = new HashMap<>();
+                errorMap.put("message", "Unauthorized Access, Hash Not Found");
+                return new ResponseEntity<>(errorMap, HttpStatus.UNAUTHORIZED);
+            }
+
+            String[] field = token.split(" ");
+            String hash = field[1];
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(!encoder.matches(env.getProperty("app.CHAINCODE"), hash)) {
+                HashMap<String, String> errorMap = new HashMap<>();
+                errorMap.put("message", "Invalid Hash");
+                return new ResponseEntity<>(errorMap, HttpStatus.UNAUTHORIZED);
+            }
+
+            Profile profile = new Profile(
+                    env.getProperty("app.FIRST_NAME"),
+                    env.getProperty("app.LAST_NAME"),
+                    env.getProperty("app.EMAIL"),
+                    env.getProperty("app.PHONE_NUMBER"),
+                    Integer.parseInt(Objects.requireNonNull(env.getProperty("app.YOE"))),
+                    env.getProperty("app.COMPANY_NAME"),
+                    env.getProperty("app.POSITION"),
+                    env.getProperty("app.GITHUB_USERNAME"),
+                    env.getProperty("app.LINKEDIN_ID"),
+                    env.getProperty("app.TWITTER_USERNAME"),
+                    env.getProperty("app.INSTAGRAM_USERNAME"),
+                    env.getProperty("app.PORTFOLIO_WEBSITE")
+            );
+            return new ResponseEntity<>(profile, HttpStatus.OK);
+        } catch (Exception e) {
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("message", "Error while getting profile data");
+            return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(value = "/verification")
-    public ResponseEntity<HashMap<String, String>> verification(@RequestBody String salt) throws JSONException {
-        final String chainCode = "y9U0NRTKDrLI9yBqqMER";
-        JSONObject jsonObject = new JSONObject(salt);
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("hash", BCrypt.hashpw(chainCode, jsonObject.getString("salt")));
-        return new ResponseEntity<>(hashMap, HttpStatus.OK);
-    }
-
-//    "<FIRST_NAME>",
-//    "<LAST_NAME>",
-//    "<YOUR_EMAIL>",
-//    "<YOUR_PHONE_NUMBER>",
-//    0,
-//    "<COMPANY_NAME>",
-//    "<POSITION>",
-//    "<GITHUB_USERNAME>",
-//    "<LINKED_ID>",
-//    "<TWITTER_USERNAME",
-//    "<INSTAGRAM_USERNAME",
-//    "<YOUR_PORTFOLIO_WEBSITE>"
-
-    @GetMapping("/profile")
-    public ResponseEntity<Object> profile() {
-        Profile profile = new Profile(
-                "Rohan Raj",
-                "Gupta",
-                "rajrohan1914@gmail.com",
-                "8707745915",
-                0,
-                "nil",
-                "nil",
-                "rohan09-raj",
-                "rohan-raj-gupta-1a3465190",
-                "RohanRajGupta6",
-                "_.rohan09._",
-                "nil"
-        );
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+    public ResponseEntity<HashMap<String, String>> verification(@RequestBody String salt) {
+        if(salt.isEmpty()) {
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("hash", "Salt not found");
+            return new ResponseEntity<>(errorMap, HttpStatus.NOT_FOUND);
+        }
+        try {
+            final String chainCode = env.getProperty("app.CHAINCODE");
+            JSONObject jsonObject = new JSONObject(salt);
+            HashMap<String, String> hashMap = new HashMap<>();
+            if (chainCode != null) {
+                hashMap.put("hash", BCrypt.hashpw(chainCode, jsonObject.getString("salt")));
+            }
+            return new ResponseEntity<>(hashMap, HttpStatus.OK);
+        } catch (Exception e) {
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("message", "Error while encryption");
+            return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
